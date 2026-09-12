@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trivia Trek — Battle of Knowledge</title>
+<meta name="description" content="A general-knowledge quiz battle game for kids aged 8-15. Every hero rides out for one question: right answers win the clash, wrong answers cost you a hero.">
+<meta name="theme-color" content="#2A1A10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Trivia Trek">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta property="og:title" content="Trivia Trek — Battle of Knowledge">
+<meta property="og:description" content="A quiz battle game for kids: answer right and your hero wins the clash, answer wrong and the hero falls.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@600;700;800;900&display=swap">
+<link rel="stylesheet" href="tt-style.css">
+</head>
+<body>
+<button class="install-btn" id="btn-install" type="button" hidden>Install app</button>
+
+<main class="frame">
+  <header class="hud">
+    <div class="crest">
+      <div class="crest-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z" fill="#F6CB5E" stroke="#5C3D1C" stroke-width="1.2"/><path d="m8.5 12 2.5 2.5 4.5-5" stroke="#235A8E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <h1>Trivia Trek</h1>
+        <p>Battle of Knowledge</p>
+      </div>
+    </div>
+    <div class="hud-stats" id="hud-stats" hidden>
+      <div class="plate" aria-label="Heroes still standing"><span class="lbl">Heroes</span><span id="hud-heroes">0/0</span></div>
+      <div class="plate" aria-label="Win streak">
+        <svg viewBox="0 0 24 24"><path fill="#FF8A3D" d="M12.96 2.29a.75.75 0 0 0-1.07-.14 9.74 9.74 0 0 0-3.54 6.18 7.55 7.55 0 0 1-1.7-1.72.75.75 0 0 0-1.16-.08A9 9 0 1 0 15.68 4.53a7.46 7.46 0 0 1-2.72-2.24Z"/></svg>
+        <span id="hud-streak">0</span>
+      </div>
+      <div class="plate" aria-label="Gold earned">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#F6CB5E" stroke="#C8922A" stroke-width="2"/><path d="M12 7v10M9.5 9.5h4a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3h4" stroke="#8A5A1A" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+        <span id="hud-gold">0</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="stage tac" aria-label="Battlefield">
+    <div class="field">
+      <canvas id="battlefield"></canvas>
+      <div class="tac-top" aria-hidden="true">
+        <span class="tac-badge atk">ATK</span>
+        <span class="tac-bar atk"><i id="bar-atk" style="width:50%"></i></span>
+        <span class="tac-medal" id="tac-count">0/0</span>
+        <span class="tac-bar def"><i id="bar-def" style="width:50%"></i></span>
+        <span class="tac-badge def">DEF</span>
+      </div>
+      <div class="tac-wave" id="tac-wave">Wave 1/1</div>
+      <div class="tac-timer" id="tac-timer-wrap" hidden><i id="tac-timer"></i></div>
+      <div class="stage-tag" style="top:56px;left:74px">
+        <span class="chip" id="chip-theme">Green Valley</span>
+        <span class="chip rank" id="chip-rank">Morale ×1</span>
+      </div>
+      <div class="tac-btns">
+        <div class="stack">
+          <button class="orb" id="btn-pause" type="button" aria-pressed="false" aria-label="Pause battle">
+            <svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>
+          </button>
+          <button class="orb" id="btn-sound" type="button" aria-pressed="true" aria-label="Sound effects on or off">
+            <svg viewBox="0 0 24 24" id="ico-sound"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/><path id="wave-a" d="M16 9.5a3.5 3.5 0 0 1 0 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path id="wave-b" d="M18.5 7a7 7 0 0 1 0 10" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path id="mute-x" d="M17 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none" hidden/></svg>
+          </button>
+        </div>
+        <div class="stack">
+          <button class="orb" id="btn-auto" type="button" aria-pressed="false" aria-label="Auto: go to the next battle automatically">Auto</button>
+          <button class="orb" id="btn-speed" type="button" aria-pressed="false" aria-label="Animation speed">
+            <svg viewBox="0 0 24 24"><path d="M3 6v12l8-6-8-6Zm9 0v12l8-6-8-6Z" fill="currentColor"/></svg><span id="speed-label">×1</span>
+          </button>
+        </div>
+      </div>
+      <div class="stage-banner" id="banner" aria-live="polite"></div>
+      <div class="pause-veil" id="pause-veil" hidden>Paused</div>
+    </div>
+    <div class="roster" id="roster" aria-label="Your heroes"></div>
+  </section>
+
+  <!-- START -->
+  <section class="panel" id="view-start">
+    <div class="eyebrow">Choose your campaign</div>
+    <h2>One question for every hero</h2>
+    <p class="sub">Each hero on your roster rides out to face one enemy squad. While you think, they fight. Pick the right answer and your hero wins the clash — pick wrong and that hero is defeated. Keep at least half your heroes standing to capture the fort.</p>
+    <div class="campaigns" id="campaigns" role="group" aria-label="Campaign difficulty"></div>
+    <div class="row">
+      <button class="btn btn-war" id="btn-to-map" type="button">March to War Map</button>
+    </div>
+  </section>
+
+  <!-- MAP -->
+  <section class="panel" id="view-map" hidden>
+    <div class="q-meta"><span class="eyebrow" id="map-eyebrow">War Map</span></div>
+    <h2 id="map-title">Campaign</h2>
+    <p class="sub" id="map-sub">Next battle</p>
+    <div class="warmap" id="warmap"></div>
+    <div class="row">
+      <button class="btn btn-stone" id="btn-map-back" type="button">Change Campaign</button>
+      <button class="btn btn-war" id="btn-attack" type="button">Attack!</button>
+    </div>
+  </section>
+
+  <!-- BATTLE -->
+  <section class="panel" id="view-battle" hidden>
+    <div class="q-meta"><span class="eyebrow" id="q-eyebrow">Battle 1</span></div>
+    <p class="q-text" id="q-text">Loading…</p>
+    <div class="answers" id="answers" role="group" aria-label="Answer choices"></div>
+    <div class="report" id="report" hidden></div>
+    <div class="row" id="next-row" hidden>
+      <button class="btn btn-war" id="btn-next" type="button">Next Hero</button>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="panel" id="view-results" hidden>
+    <div class="eyebrow" id="res-eyebrow">War report</div>
+    <h2 id="res-title">Fort captured!</h2>
+    <p class="sub" id="res-sub"></p>
+    <div class="medals" id="res-medals"></div>
+    <div class="tally">
+      <div><b id="res-won">0</b><span>Heroes standing</span></div>
+      <div><b id="res-gold">0</b><span>Gold</span></div>
+      <div><b id="res-streak">0</b><span>Best streak</span></div>
+      <div><b id="res-mvp">—</b><span>MVP hero</span></div>
+    </div>
+    <div class="row">
+      <button class="btn btn-stone" id="btn-res-retry" type="button">Fight Again</button>
+      <button class="btn btn-war" id="btn-res-map" type="button">Back to War Map</button>
+    </div>
+  </section>
+</main>
+
+<script src="tt-questions.js"></script>
+<script src="tt-heroes.js"></script>
+<script src="tt-audio.js"></script>
+<script src="tt-field.js"></script>
+<script src="tt-troops.js"></script>
+<script src="tt-game.js"></script>
+<script>
+  // installable app + offline cache
+  (function(){
+    var prompt = null, btn = document.getElementById("btn-install");
+    window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); prompt = e; btn.hidden = false; });
+    btn.addEventListener("click", function(){ if(!prompt) return; btn.hidden = true; prompt.prompt(); prompt = null; });
+    window.addEventListener("appinstalled", function(){ btn.hidden = true; });
+    if("serviceWorker" in navigator && location.protocol !== "file:"){
+      window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
+    }
+  })();
+</script>
+</body>
+</html>
