@@ -1,0 +1,18 @@
+{
+  "name": "Trivia Trek — Battle of Knowledge",
+  "short_name": "Trivia Trek",
+  "description": "A general-knowledge quiz battle game for kids aged 8-15. Each hero rides out for one question: a right answer wins the clash, a wrong answer costs you that hero.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#2A1A10",
+  "theme_color": "#2A1A10",
+  "categories": ["games", "education", "kids"],
+  "lang": "en",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
